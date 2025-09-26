@@ -1,36 +1,208 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🏆 Ludus - Sistema de Gestão Escolar
 
-## Getting Started
+Sistema mini-ERP para escola de futsal Ludus, desenvolvido com **Next.js 15**, **Firebase** e **shadcn/ui**.
 
-First, run the development server:
+## 🎯 Visão Geral
+
+O Ludus é um sistema completo de gestão escolar focado em escolas de futsal, oferecendo:
+
+- **Gestão de Alunos**: Cadastro completo com fotos e matrículas automáticas
+- **Organização de Turmas**: Controle de turmas por dias da semana
+- **Sistema Financeiro**: Controle de receitas (mensalidades, matrículas) e custos
+- **Presenças**: Sistema de chamada para professores
+- **Dashboard**: Visão geral com métricas e relatórios
+
+## 🚀 Tecnologias
+
+- **Frontend**: Next.js 15 com App Router
+- **Backend**: Server Actions (sem API routes)
+- **Database**: Firebase Firestore
+- **Auth**: Firebase Authentication
+- **Storage**: Firebase Storage
+- **UI**: shadcn/ui + Tailwind CSS
+- **Deploy**: Firebase Hosting
+
+## 🎨 Paleta de Cores
+
+Sistema baseado na identidade visual da Ludus:
+
+- **Primária**: `#C62828` (Vermelho clássico)
+- **Secundária**: `#1B2A49` (Azul escuro)
+- **Destaque**: `#3B82F6` (Azul claro)
+- **Atenção**: `#E11D48` (Inadimplência)
+- **Sucesso**: `#10B981` (Pagamentos)
+
+## 📁 Estrutura do Projeto
+
+```
+src/
+├── app/                    # Páginas da aplicação
+│   ├── dashboard/          # Dashboard principal
+│   ├── pessoas/            # Cadastro de alunos
+│   ├── turmas/             # Gestão de turmas
+│   ├── financeiro/         # Sistema financeiro
+│   ├── custos/             # Controle de custos
+│   ├── presencas/          # Chamada de presença
+│   └── login/              # Autenticação
+├── components/             # Componentes reutilizáveis
+│   ├── ui/                 # Componentes shadcn/ui
+│   ├── header.tsx          # Cabeçalho com logo
+│   ├── sidebar.tsx         # Menu lateral
+│   └── layout.tsx          # Layout principal
+├── lib/                    # Utilitários e configurações
+│   ├── schemas.ts          # Tipos TypeScript
+│   ├── firebase.ts         # Configuração Firebase
+│   └── actions/            # Server Actions
+│       ├── pessoas.ts      # CRUD de pessoas
+│       ├── turmas.ts       # CRUD de turmas
+│       ├── receitas.ts     # CRUD de receitas
+│       ├── custos.ts       # CRUD de custos
+│       ├── presencas.ts    # CRUD de presenças
+│       └── dashboard.ts    # Métricas e relatórios
+└── hooks/                  # Hooks customizados
+```
+
+## 🗄️ Estrutura do Banco (Firestore)
+
+### Coleções
+
+1. **`pessoas`** - Cadastro de alunos
+   - `nome`, `dataNascimento`, `identidade`, `fotoUrl`
+   - `matricula` (7 caracteres gerados)
+   - `status` (ativo/trancado/inativo)
+
+2. **`turmas`** - Organização por turma
+   - `nome`, `diasSemana[]`, `pessoasIds[]`
+
+3. **`receitas`** - Controle financeiro
+   - `pessoaId`, `tipo`, `valor`, `status`
+   - `dataVencimento`, `dataPagamento`, `referencia`
+
+4. **`custos`** - Despesas da escola
+   - `tipo`, `descricao`, `valor`, `data`
+
+5. **`usuarios`** - Controle de acesso
+   - `nome`, `email`, `tipo` (admin/professor)
+
+6. **`presencas`** - Chamada de presença
+   - `turmaId`, `pessoaId`, `data`, `presente`, `observacoes`
+
+## 🔧 Configuração
+
+### 1. Instalar Dependências
+
+```bash
+npm install
+```
+
+### 2. Configurar Firebase
+
+1. Crie um projeto no [Firebase Console](https://console.firebase.google.com)
+2. Ative Firestore, Authentication e Storage
+3. Gere uma chave de serviço (Service Account)
+4. Copie `env.example` para `.env.local` e configure:
+
+```env
+FIREBASE_PROJECT_ID=seu-project-id
+FIREBASE_CLIENT_EMAIL=seu-client-email
+FIREBASE_PRIVATE_KEY=sua-private-key
+FIREBASE_STORAGE_BUCKET=seu-storage-bucket
+```
+
+### 3. Executar o Projeto
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Acesse: `http://localhost:3000`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 👥 Funcionalidades
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 🔐 Autenticação
+- Login com email/senha
+- Controle de acesso (Admin/Professor)
+- Redirecionamento automático
 
-## Learn More
+### 👨‍🎓 Gestão de Alunos
+- Cadastro completo com foto
+- Matrícula automática (7 caracteres)
+- Controle de status (ativo/trancado/inativo)
+- Busca e filtros
 
-To learn more about Next.js, take a look at the following resources:
+### 🏫 Organização de Turmas
+- Criação de turmas por dias da semana
+- Adição/remoção de alunos
+- Visualização de turmas
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 💰 Sistema Financeiro
+- **Receitas**: Mensalidades, matrículas, uniformes
+- **Custos**: Professores, aluguel, materiais
+- **Controle**: Pagamentos, inadimplência
+- **Relatórios**: Entradas, saídas, lucro
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 📋 Presenças
+- Chamada por turma e data
+- Observações por aluno
+- Histórico de presenças
+- Estatísticas de frequência
 
-## Deploy on Vercel
+### 📊 Dashboard
+- Métricas em tempo real
+- Lista de inadimplentes
+- Novos alunos do mês
+- Resumo financeiro
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🎯 Próximos Passos
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Implementações Pendentes
+
+1. **Firebase Auth Real**
+   - Substituir autenticação simulada
+   - Implementar login/logout real
+
+2. **Upload de Fotos**
+   - Integração com Firebase Storage
+   - Redimensionamento automático
+
+3. **Relatórios Avançados**
+   - Gráficos de receitas/custos
+   - Exportação para PDF/Excel
+   - Filtros por período
+
+4. **Notificações**
+   - Lembretes de vencimento
+   - Alertas de inadimplência
+   - Notificações push
+
+5. **Mobile**
+   - PWA (Progressive Web App)
+   - App nativo com React Native
+
+## 🚀 Deploy
+
+### Firebase Hosting
+
+```bash
+# Build do projeto
+npm run build
+
+# Deploy
+firebase deploy
+```
+
+### Variáveis de Ambiente
+
+Configure as variáveis no Firebase Hosting:
+- `FIREBASE_PROJECT_ID`
+- `FIREBASE_CLIENT_EMAIL`
+- `FIREBASE_PRIVATE_KEY`
+- `FIREBASE_STORAGE_BUCKET`
+
+## 📝 Licença
+
+Este projeto foi desenvolvido para a escola de futsal Ludus.
+
+---
+
+**Ludus** - *pelo prazer de jogar* ⚽
