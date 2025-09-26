@@ -48,7 +48,12 @@ import {
   TrendingDown,
 } from "lucide-react";
 import { Custo } from "@/lib/schemas";
-import { getCustosAction, createCustoAction, updateCustoAction, deleteCustoAction } from "@/lib/actions/custos";
+import {
+  getCustosAction,
+  createCustoAction,
+  updateCustoAction,
+  deleteCustoAction,
+} from "@/lib/actions/custos";
 
 export default function CustosPage() {
   const [user, setUser] = useState<{
@@ -110,27 +115,25 @@ export default function CustosPage() {
   const handleCreateCusto = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // TODO: Implementar chamada real para createCustoAction
-      const novoCusto: Custo = {
-        id: Date.now().toString(),
+      const result = await createCustoAction({
         tipo: formData.tipo,
         descricao: formData.descricao,
         valor: parseFloat(formData.valor),
         data: formData.data,
-        timestamps: {
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        },
-      };
-
-      setCustos((prev) => [novoCusto, ...prev]);
-      setIsCreateDialogOpen(false);
-      setFormData({
-        tipo: "geral",
-        descricao: "",
-        valor: "",
-        data: "",
       });
+
+      if (result.success) {
+        setCustos((prev) => [result.data, ...prev]);
+        setIsCreateDialogOpen(false);
+        setFormData({
+          tipo: "geral",
+          descricao: "",
+          valor: "",
+          data: "",
+        });
+      } else {
+        console.error("Erro ao criar custo:", result.error);
+      }
     } catch (error) {
       console.error("Erro ao criar custo:", error);
     }
@@ -152,33 +155,43 @@ export default function CustosPage() {
     if (!selectedCusto) return;
 
     try {
-      // TODO: Implementar chamada real para updateCustoAction
-      setCustos((prev) =>
-        prev.map((custo) =>
-          custo.id === selectedCusto.id
-            ? {
-                ...custo,
-                tipo: formData.tipo,
-                descricao: formData.descricao,
-                valor: parseFloat(formData.valor),
-                data: formData.data,
-                timestamps: {
-                  ...custo.timestamps,
-                  updatedAt: new Date().toISOString(),
-                },
-              }
-            : custo
-        )
-      );
-
-      setIsEditDialogOpen(false);
-      setSelectedCusto(null);
-      setFormData({
-        tipo: "geral",
-        descricao: "",
-        valor: "",
-        data: "",
+      const result = await updateCustoAction(selectedCusto.id, {
+        tipo: formData.tipo,
+        descricao: formData.descricao,
+        valor: parseFloat(formData.valor),
+        data: formData.data,
       });
+
+      if (result.success) {
+        setCustos((prev) =>
+          prev.map((custo) =>
+            custo.id === selectedCusto.id
+              ? {
+                  ...custo,
+                  tipo: formData.tipo,
+                  descricao: formData.descricao,
+                  valor: parseFloat(formData.valor),
+                  data: formData.data,
+                  timestamps: {
+                    ...custo.timestamps,
+                    updatedAt: new Date().toISOString(),
+                  },
+                }
+              : custo
+          )
+        );
+
+        setIsEditDialogOpen(false);
+        setSelectedCusto(null);
+        setFormData({
+          tipo: "geral",
+          descricao: "",
+          valor: "",
+          data: "",
+        });
+      } else {
+        console.error("Erro ao atualizar custo:", result.error);
+      }
     } catch (error) {
       console.error("Erro ao atualizar custo:", error);
     }
@@ -186,8 +199,12 @@ export default function CustosPage() {
 
   const handleDeleteCusto = async (custoId: string) => {
     try {
-      // TODO: Implementar chamada real para deleteCustoAction
-      setCustos((prev) => prev.filter((custo) => custo.id !== custoId));
+      const result = await deleteCustoAction(custoId);
+      if (result.success) {
+        setCustos((prev) => prev.filter((custo) => custo.id !== custoId));
+      } else {
+        console.error("Erro ao deletar custo:", result.error);
+      }
     } catch (error) {
       console.error("Erro ao deletar custo:", error);
     }
